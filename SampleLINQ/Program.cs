@@ -80,7 +80,16 @@ namespace SampleLINQ
         private static void PagingOrder(List<Student> allStudents)
         {
             //Using ID in descending order, with pagination of 10 items per page, on 5th page
-            //var students
+            var students = (from sortedStudents in allStudents
+                            orderby sortedStudents.ID ascending
+                            select sortedStudents).Take(10).Skip(5);
+
+            foreach (var student in students)
+            {
+                Console.WriteLine("PagingOrder: {0} {1} ID:{2}", student.First, student.Last, student.ID.ToString());
+
+            }
+
         }
 
         private static void WhereNullContainsType(List<Student> allStudents)
