@@ -33,10 +33,12 @@ namespace SampleLINQ
             Console.WriteLine("Start ");
             List<Student> allStudents = GetStudents();
 
+            List<StudentGrades> allGrades = GetStudentGrades();
+
             SelectOne(allStudents);
             WhereNullContainsType(allStudents);
             PagingOrder(allStudents);
-            JoinShapeDistinct(allStudents);
+            JoinShapeDistinct(allStudents, allGrades);
             GroupCountSumProjection(allStudents);
             CompositeOuterJoin(allStudents);
             Insert(allStudents);
@@ -46,6 +48,8 @@ namespace SampleLINQ
             
             Console.ReadKey();
         }
+
+    
 
         private static void Delete(List<Student> allStudents)
         {
@@ -69,12 +73,42 @@ namespace SampleLINQ
 
         private static void GroupCountSumProjection(List<Student> allStudents)
         {
-            throw new NotImplementedException();
+            var lastNamesGroup = from student in allStudents
+                                 group student by student.Last;
+
+            foreach (var lnGroup in lastNamesGroup)
+            {
+                Console.WriteLine("GroupCountSumProjection LNGroup: {0} ", lnGroup.Key);
+
+                // ln.Key
+                foreach (var student in lnGroup)
+                {
+                    Console.WriteLine("GroupCountSumProjection students: {0} {1} ID:{2}", student.First, student.Last, student.ID.ToString());
+
+                    //name.Last
+                }
+            }
         }
 
-        private static void JoinShapeDistinct(List<Student> allStudents)
+        private static void JoinShapeDistinct(List<Student> allStudents, List<StudentGrades> allGrades)
         {
-            throw new NotImplementedException();
+            var students = (from allS in allStudents
+                           join allG in allGrades
+                           on allS.ID equals allG.StudentID
+                           select new
+                           {
+                               ID = allS.ID,
+                               fName = allS.First,
+                               lName = allS.Last,
+                               sMath = allG.Math,
+                               sScience = allG.Science
+                           }).Distinct();
+
+            foreach (var student in students)
+            {
+                Console.WriteLine("JoinShapeDistinct: {0} {1} Math:{2} Science:{2}", student.fName, student.lName, student.sMath, student.sScience);
+
+            }
         }
 
         private static void PagingOrder(List<Student> allStudents)
